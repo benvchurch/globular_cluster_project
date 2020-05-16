@@ -21,9 +21,10 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from analysis import *
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-cluster_list = ['M3', 'M5']
-filter_list = ['F4','F5']
+cluster_list = ['M3', 'M5', 'M13','M53','M92']
+filter_list = ['F1','F2','F3','F4','F5']
 base_directory = "../cluster_data/"
 plot_directory = "../plots/"
 
@@ -33,6 +34,8 @@ def path_name(clust, F):
 clust_resutls = []
 
 for clust in cluster_list:
+	print 'Processsing ' + clust
+	
 	for F in filter_list:
 		if not path.exists(path_name(clust, F)):
 			stack_images(base_directory + clust + '/' + F + '/' + clust + '_000', path_name(clust, F))
@@ -48,32 +51,35 @@ for clust in cluster_list:
 		maximum = np.quantile(data.flatten(), 0.99)
 		fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,16))
 		plt.title(clust)
-		plt.imshow(data, cmap='gray', vmin = 0, vmax = maximum)
-		plt.colorbar()
-		fig.savefig(plot_directory + clust + F + 'processed.pdf', dpi=300, bbox_inches='tight')
+		im = plt.imshow(data, cmap='gray', vmin = 0, vmax = maximum)
+		divider = make_axes_locatable(ax)
+		cax = divider.append_axes("right", size="5%", pad=0.05)
+		plt.colorbar(im, cax=cax)
+		fig.savefig(plot_directory + clust + F + '_processed.pdf', dpi=300, bbox_inches='tight')
 		plt.close(fig)
 
-
+	print 'Analysing ' + clust
+	
 	# find star positions
 	positions = find_stars(all_band_image)
 
 	# make a plot of the idenified stars
 	fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,16))
-	plt.title('DAOStarFinder')
+	plt.title('Stars Identified via DAOStarFinder')
 	maximum = np.quantile(all_band_image.flatten(), 0.99)
 	plt.imshow(all_band_image, cmap='gray', interpolation='nearest', vmin = 0, vmax = maximum)
 	apertures = CircularAperture(positions, r=4.)
 	apertures.plot(color='red', lw=1.5)
 
-	fig.savefig(plot_directory + clust + F + 'identified.pdf', dpi=300, bbox_inches='tight')
+	fig.savefig(plot_directory + clust + '_identified.pdf', dpi=300, bbox_inches='tight')
 	plt.close(fig)
 	# do photometry on the bands
 	star_list = calculate_photometry(data_list, positions)
 
 	# make HR diagram
 	make_hr_diagram(star_list, clust, plot_directory)
-	# make_m_diagram(star_list, clust, plot_directory)
+	make_m_diagram(star_list, clust, plot_directory)
 
-	clust_resutls.append([clust, fit_cluster_shape(positions), avg_color(star_list), avg_metal(star_list)])
+	clust_resutls.append([clust, fit_cluster_shape(positions), fit_cluster(positions, star_list, all_band_image, clust, plot_directory), avg_color(star_list), avg_metal(star_list)])
 
 print clust_resutls
