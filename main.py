@@ -75,11 +75,28 @@ for clust in cluster_list:
 	plt.close(fig)
 	# do photometry on the bands
 	star_list = calculate_photometry(data_list, positions)
+	
+	# calculate params
+	NCasp = fit_cluster_shape(positions)
+	Casp, star_list_trunc = fit_cluster(positions, star_list, all_band_image, clust, plot_directory)
+	
+	clust_resutls.append([clust, fNCasp, Casp, avg_color(star_list), avg_metal(star_list), avg_color(star_list_trunc), avg_metal(star_list_trunc)])
 
-	# make HR diagram
+	# make HR diagrams
 	make_hr_diagram(star_list, clust, plot_directory)
+	make_VR_diagram(star_list, clust, plot_directory) 
+	make_BR_diagram(star_list, clust, plot_directory)
+	make_BG_diagram(star_list, clust, plot_directory)
 	make_m_diagram(star_list, clust, plot_directory)
+	
+	# make HR diagrams with truncation
+	make_hr_diagram(star_list_trunc, clust, plot_directory + 'truncated/')
+	make_VR_diagram(star_list_trunc, clust, plot_directory + 'truncated/') 
+	make_BR_diagram(star_list_trunc, clust, plot_directory + 'truncated/')
+	make_BG_diagram(star_list_trunc, clust, plot_directory + 'truncated/')
+	make_m_diagram(star_list_trunc, clust, plot_directory + 'truncated/')
 
-	clust_resutls.append([clust, fit_cluster_shape(positions), fit_cluster(positions, star_list, all_band_image, clust, plot_directory), avg_color(star_list), avg_metal(star_list)])
+
+	
 
 print clust_resutls

@@ -13,7 +13,47 @@ def make_hr_diagram(star_list, clust, plot_directory):
     plt.title(clust + ' Color Magnitude Diagram', fontsize=24)
     plt.plot(colors, magnitues, 'ko')
     fig.savefig(plot_directory + clust + '_HR.pdf', dpi=300, bbox_inches='tight')
+    ax.set_xlim(-3,3)
     plt.close(fig)
+    
+def make_VR_diagram(star_list, clust, plot_directory):
+    magnitues = [s.tot_mag() for s in star_list]
+    colors = [s.VR_col() for s in star_list]
+    fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,16))
+    plt.xlabel('V-R color', fontsize=16)
+    plt.ylabel('magnitue', fontsize=16)
+    plt.title(clust + ' Color Magnitude Diagram', fontsize=24)
+    plt.plot(colors, magnitues, 'ko')
+    fig.savefig(plot_directory + clust + '_VR.pdf', dpi=300, bbox_inches='tight')
+    ax.set_xlim(-3,3)
+    plt.close(fig)  
+    
+
+def make_BR_diagram(star_list, clust, plot_directory):
+    magnitues = [s.tot_mag() for s in star_list]
+    colors = [s.BR_col() for s in star_list]
+    fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,16))
+    plt.xlabel('V-R color', fontsize=16)
+    plt.ylabel('magnitue', fontsize=16)
+    plt.title(clust + ' Color Magnitude Diagram', fontsize=24)
+    plt.plot(colors, magnitues, 'ko')
+    fig.savefig(plot_directory + clust + '_BR.pdf', dpi=300, bbox_inches='tight')
+    ax.set_xlim(-3,3)
+    plt.close(fig)    
+
+
+def make_BG_diagram(star_list, clust, plot_directory):
+    magnitues = [s.tot_mag() for s in star_list]
+    colors = [s.BG_col() for s in star_list]
+    fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize=(12,16))
+    plt.xlabel('V-R color', fontsize=16)
+    plt.ylabel('magnitue', fontsize=16)
+    plt.title(clust + ' Color Magnitude Diagram', fontsize=24)
+    plt.plot(colors, magnitues, 'ko')
+    fig.savefig(plot_directory + clust + '_BG.pdf', dpi=300, bbox_inches='tight')
+    ax.set_xlim(-3,3)
+    plt.close(fig)    
+      
 
 
 def make_m_diagram(star_list, clust, plot_directory):
@@ -59,9 +99,12 @@ def fit_cluster(positions, star_list, image, clust, plot_directory):
 	maximum = np.quantile(image.flatten(), 0.99)
 	plt.imshow(image, cmap='gray', interpolation='nearest', vmin = 0, vmax = maximum)
 	
-	for component in range(1,2):
+	print set(labels)
+	
+	for component in range(0,1):
 		apertures = CircularAperture([positions[i] for i, l in enumerate(labels) if l == component], r=4.)
 		if component == 1:
+			star_list_trunc = [star_list[i] for i, l in enumerate(labels) if l == component]
 			apertures.plot(color='red', lw=1.5)
 		else:
 			apertures.plot(color='blue', lw=1.5)
@@ -72,6 +115,6 @@ def fit_cluster(positions, star_list, image, clust, plot_directory):
 
 	eigen_vals = np.linalg.eig(covariance)[0]
 	Casp = np.sqrt(abs(eigen_vals[0] - eigen_vals[1])/(eigen_vals[0] + eigen_vals[1]))
-	return Casp
+	return Casp, star_list_trunc
 
 	
