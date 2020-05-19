@@ -80,7 +80,7 @@ for clust in cluster_list:
 	NCasp = fit_cluster_shape(positions)
 	Casp, star_list_trunc = fit_cluster(positions, star_list, all_band_image, clust, plot_directory)
 	
-	clust_resutls.append([clust, fNCasp, Casp, avg_color(star_list), avg_metal(star_list), avg_color(star_list_trunc), avg_metal(star_list_trunc)])
+	clust_resutls.append([clust, NCasp, Casp, avg_color(star_list), avg_metal(star_list), avg_color(star_list_trunc), avg_metal(star_list_trunc)])
 
 	# make HR diagrams
 	make_hr_diagram(star_list, clust, plot_directory)

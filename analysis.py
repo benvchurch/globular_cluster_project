@@ -88,7 +88,6 @@ def fit_cluster_shape(positions):
 
 # TODO
 def fit_cluster(positions, star_list, image, clust, plot_directory):
-	print "HERE"
 	X_train = [(s.pos[0], s.pos[1], s.m1(), s.BV_col()) for s in star_list]
 	clf = mixture.GaussianMixture(n_components=2, covariance_type='full')
 	clf.fit(X_train)
@@ -98,10 +97,9 @@ def fit_cluster(positions, star_list, image, clust, plot_directory):
 	plt.title('Gaussian Mixture Classified Stars')
 	maximum = np.quantile(image.flatten(), 0.99)
 	plt.imshow(image, cmap='gray', interpolation='nearest', vmin = 0, vmax = maximum)
-	
-	print set(labels)
-	
-	for component in range(0,1):
+
+	star_list_trunc = None
+	for component in range(0,2):
 		apertures = CircularAperture([positions[i] for i, l in enumerate(labels) if l == component], r=4.)
 		if component == 1:
 			star_list_trunc = [star_list[i] for i, l in enumerate(labels) if l == component]

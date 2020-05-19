@@ -25,7 +25,10 @@ class star_data:
     mag_BVR = None
 
     def tot_mag(self):
-        return -2.5*np.log10(self.total_luminosity)
+		if self.total_luminosity == 0:
+			print 'Zero Lumen ' + str(self.pos)
+			return 0
+		return -2.5*np.log10(self.total_luminosity)
 
     def band_mag(self, i):
 		if self.luminosity_bands[i] == 0:
